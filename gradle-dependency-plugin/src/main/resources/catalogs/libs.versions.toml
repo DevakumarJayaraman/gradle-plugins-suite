@@ -1,0 +1,14 @@
+[versions]
+springBoot = "3.3.4"
+springCloud = "2024.0.3"
+kotlin = "2.0.21"
+jackson = "2.18.0"
+
+[libraries]
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+
+[plugins]
+springboot = { id = "org.springframework.boot", version.ref = "springBoot" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
