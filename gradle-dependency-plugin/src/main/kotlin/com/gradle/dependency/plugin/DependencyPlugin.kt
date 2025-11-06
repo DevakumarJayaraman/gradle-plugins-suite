@@ -9,22 +9,25 @@ import org.gradle.kotlin.dsl.*
 import java.io.File
 import java.net.URI
 
+/**
+ * Convention plugin that provides standardized dependency management, repository configuration,
+ * and build setup for Java/Kotlin projects.
+ *
+ * This plugin centralizes:
+ * - Plugin application (Kotlin, Spring Boot based on pipelineType)
+ * - Repository configuration
+ * - Version catalog distribution
+ * - Java toolchain and test framework setup
+ *
+ * Consumers only need to apply this single plugin - all required plugins are applied automatically.
+ */
 class DependencyPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val pipelineType = (project.findProperty("pipelineType") as? String)?.uppercase() ?: "SERVICE"
         project.logger.lifecycle("🔧 Applying gradle-dependency-plugin for ${project.name} (pipelineType=$pipelineType)")
 
         configureRepositories(project)
-
-        project.pluginManager.apply("java-library")
-        project.pluginManager.apply("org.jetbrains.kotlin.jvm")
-
-        if (pipelineType == "SERVICE") {
-            project.pluginManager.apply("org.springframework.boot")
-            project.logger.lifecycle("✅ SERVICE detected: Boot plugin applied")
-        } else {
-            project.logger.lifecycle("📦 LIB detected: Boot plugin skipped")
-        }
+        applyRequiredPlugins(project, pipelineType)
 
         if (project == project.rootProject) {
             project.gradle.settingsEvaluated { applyCatalogFromResource(this) }
@@ -56,6 +59,31 @@ class DependencyPlugin : Plugin<Project> {
         project.logger.lifecycle("📦 Repositories applied automatically for ${project.name}")
     }
 
+    /**
+     * Applies required plugins based on pipeline type.
+     * Plugins are applied conditionally to be idempotent.
+     */
+    private fun applyRequiredPlugins(project: Project, pipelineType: String) {
+        // Apply base plugins
+        project.pluginManager.apply("java-library")
+
+        // Apply Kotlin plugin if not already applied
+        if (!project.pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
+            project.pluginManager.apply("org.jetbrains.kotlin.jvm")
+            project.logger.lifecycle("✅ Applied Kotlin JVM plugin")
+        }
+
+        // Apply Spring Boot for SERVICE pipeline type
+        if (pipelineType == "SERVICE") {
+            if (!project.pluginManager.hasPlugin("org.springframework.boot")) {
+                project.pluginManager.apply("org.springframework.boot")
+                project.logger.lifecycle("✅ SERVICE detected: Spring Boot plugin applied")
+            }
+        } else {
+            project.logger.lifecycle("📦 LIB detected: Spring Boot plugin skipped")
+        }
+    }
+
     private fun applyCatalogFromResource(settings: Settings) {
         val resourcePath = "/catalogs/libs.versions.toml"
         val text = javaClass.getResourceAsStream(resourcePath)?.bufferedReader()?.readText()
@@ -68,8 +96,9 @@ class DependencyPlugin : Plugin<Project> {
             @Suppress("UnstableApiUsage")
             repositories { mavenCentral() }
             versionCatalogs {
-                val catalogFiles = settings.providers.provider { listOf(generated) }
-                create("libs") {from(catalogFiles.get())}
+                create("libs") {
+                    from(generated)
+                }
             }
         }
         println("📘 Version catalog applied from plugin resource.")
