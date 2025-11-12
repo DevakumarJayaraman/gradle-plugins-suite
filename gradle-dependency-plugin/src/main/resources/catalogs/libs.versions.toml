@@ -3,11 +3,14 @@ springBoot = "3.3.4"
 springCloud = "2024.0.3"
 kotlin = "2.0.21"
 jackson = "2.18.0"
+tooling = "1.0.2"
 
 [libraries]
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+spring-boot-starter-jetty = { module = "org.springframework.boot:spring-boot-starter-jetty", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+gradle-tooling-plugin = { module = "com.gradle.tooling.plugin:gradle-tooling-plugin", version.ref = "tooling" }
 
 [plugins]
 springboot = { id = "org.springframework.boot", version.ref = "springBoot" }

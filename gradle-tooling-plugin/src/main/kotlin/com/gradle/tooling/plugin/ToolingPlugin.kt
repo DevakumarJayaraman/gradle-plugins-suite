@@ -6,6 +6,7 @@ import com.gradle.tooling.plugin.tasks.EnvSummaryTask
 import com.gradle.tooling.plugin.tasks.HelloToolingTask
 import com.gradle.tooling.plugin.tasks.ProjectPropertiesTask
 import com.gradle.tooling.plugin.tasks.TaskListTask
+import com.gradle.tooling.plugin.tasks.VerifyNoDirectVersionsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -43,6 +44,8 @@ class ToolingPlugin : Plugin<Project> {
 
         // Register DeepClean task
         project.tasks.register<DeepCleanTask>("deepClean")
+
+        project.tasks.register<VerifyNoDirectVersionsTask>("verifyNoDirectVersions")
 
         project.logger.lifecycle("✅ gradle-tooling-plugin applied successfully")
         project.logger.lifecycle("   Run './gradlew tasks --group tooling' to see available tasks")

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.gradle.tooling.plugin"
-version = "1.0.1"
+version = "1.0.2"
 
 kotlin {
     jvmToolchain(17)
