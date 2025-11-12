@@ -10,6 +10,15 @@ dependencies {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
     }
     implementation(libs.spring.boot.starter.jetty)
+
     implementation(libs.gradle.tooling.plugin)
+
+    constraints {
+        // use the fully-qualified module coordinate
+        implementation("org.springframework.boot:spring-boot-starter-web:3.3.4") {
+            because("Force Spring Boot web - override plugin catalog")
+        }
+    }
+
     testImplementation(libs.spring.boot.starter.test)
 }
